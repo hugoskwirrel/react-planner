@@ -71,7 +71,7 @@ let store = createStore(
 
 let plugins = [
   PlannerPlugins.Keyboard(),
-  PlannerPlugins.Autosave(false),
+  PlannerPlugins.Autosave('react-planner_v0'),
   PlannerPlugins.ConsoleDebugger()
 ];
 
@@ -89,6 +89,7 @@ ReactDOM.render(
           plugins={plugins}
           toolbarButtons={toolbarButtons}
           stateExtractor={state => state.get('react-planner')}
+          readOnly={false}
         />
       )}
     </ContainerDimensions>
