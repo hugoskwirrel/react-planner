@@ -40,17 +40,33 @@ class ReactPlanner extends Component {
 
   componentWillMount() {
     let { store } = this.context;
-    let { projectActions, catalog, stateExtractor, plugins } = this.props;
+    let {
+      projectActions,
+      catalog,
+      stateExtractor,
+      plugins,
+      readOnly
+    } = this.props;
     plugins.forEach(plugin => plugin(store, stateExtractor));
     projectActions.initCatalog(catalog);
+    projectActions.setReadOnly(readOnly);
   }
 
   componentWillReceiveProps(nextProps) {
-    let { stateExtractor, state, projectActions, catalog } = nextProps;
+    let {
+      stateExtractor,
+      state,
+      projectActions,
+      catalog,
+      readOnly
+    } = nextProps;
     let plannerState = stateExtractor(state);
     let catalogReady = plannerState.getIn(['catalog', 'ready']);
     if (!catalogReady) {
       projectActions.initCatalog(catalog);
+    }
+    if (readOnly !== this.props.readOnly) {
+      projectActions.setReadOnly(readOnly);
     }
   }
 
