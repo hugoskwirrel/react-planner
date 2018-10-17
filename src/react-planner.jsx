@@ -55,7 +55,14 @@ class ReactPlanner extends Component {
   }
 
   render() {
-    let { width, height, state, stateExtractor, ...props } = this.props;
+    let {
+      width,
+      height,
+      state,
+      stateExtractor,
+      readOnly,
+      ...props
+    } = this.props;
 
     let contentW = width - toolbarW - sidebarW;
     let toolbarH = height - footerBarH;
@@ -70,12 +77,14 @@ class ReactPlanner extends Component {
           width={toolbarW}
           height={toolbarH}
           state={extractedState}
+          readOnly={readOnly}
           {...props}
         />
         <Content
           width={contentW}
           height={contentH}
           state={extractedState}
+          readOnly={readOnly}
           {...props}
           onWheel={event => event.preventDefault()}
         />
@@ -83,12 +92,14 @@ class ReactPlanner extends Component {
           width={sidebarW}
           height={sidebarH}
           state={extractedState}
+          readOnly={readOnly}
           {...props}
         />
         <FooterBar
           width={width}
           height={footerBarH}
           state={extractedState}
+          readOnly={readOnly}
           {...props}
         />
       </div>
