@@ -3,14 +3,22 @@ import PropTypes from 'prop-types';
 import { FormLabel, FormColorInput } from '../../components/style/export';
 import PropertyStyle from './shared-property-style';
 
-export default function PropertyColor({value, onUpdate, configs, sourceElement, internalState, state}) {
-
-  let update = (val) => {
-
+export default function PropertyColor({
+  value,
+  onUpdate,
+  configs,
+  sourceElement,
+  internalState,
+  state,
+  readOnly
+}) {
+  let update = val => {
     if (configs.hook) {
-      return configs.hook(val, sourceElement, internalState, state).then(_val => {
-        return onUpdate(_val);
-      });
+      return configs
+        .hook(val, sourceElement, internalState, state)
+        .then(_val => {
+          return onUpdate(_val);
+        });
     }
 
     return onUpdate(val);
@@ -19,14 +27,18 @@ export default function PropertyColor({value, onUpdate, configs, sourceElement, 
   return (
     <table className="PropertyColor" style={PropertyStyle.tableStyle}>
       <tbody>
-      <tr>
-        <td style={PropertyStyle.firstTdStyle}>
-          <FormLabel>{configs.label}</FormLabel>
-        </td>
-        <td>
-          <FormColorInput value={value} onChange={event => update(event.target.value)}/>
-        </td>
-      </tr>
+        <tr>
+          <td style={PropertyStyle.firstTdStyle}>
+            <FormLabel>{configs.label}</FormLabel>
+          </td>
+          <td>
+            <FormColorInput
+              value={value}
+              onChange={event => update(event.target.value)}
+              readOnly={readOnly}
+            />
+          </td>
+        </tr>
       </tbody>
     </table>
   );
@@ -38,5 +50,6 @@ PropertyColor.propTypes = {
   configs: PropTypes.object.isRequired,
   sourceElement: PropTypes.object,
   internalState: PropTypes.object,
-  state: PropTypes.object.isRequired
+  state: PropTypes.object.isRequired,
+  readOnly: PropTypes.bool
 };

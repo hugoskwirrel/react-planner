@@ -30,10 +30,19 @@ const sortButtonsCb = (a, b) => {
   return a.index - b.index;
 };
 
-const mapButtonsCb = (el, ind) => <If key={ind} condition={el.condition} style={{ position: 'relative' }}>{el.dom}</If>;
+const mapButtonsCb = (el, ind) => (
+  <If key={ind} condition={el.condition} style={{ position: 'relative' }}>
+    {el.dom}
+  </If>
+);
 
-export default function Sidebar({ state, width, height, sidebarComponents }) {
-
+export default function Sidebar({
+  state,
+  width,
+  height,
+  sidebarComponents,
+  readOnly
+}) {
   let selectedLayer = state.getIn(['scene', 'selectedLayer']);
 
   //TODO change in multi-layer check
@@ -44,32 +53,80 @@ export default function Sidebar({ state, width, height, sidebarComponents }) {
     selected.items.size > 1 ||
     selected.holes.size > 1 ||
     selected.areas.size > 1 ||
-    selected.lines.size + selected.items.size + selected.holes.size + selected.areas.size > 1;
+    selected.lines.size +
+      selected.items.size +
+      selected.holes.size +
+      selected.areas.size >
+      1;
 
-  let selectedGroup = state.getIn(['scene', 'groups']).findEntry( g => g.get('selected') );
+  let selectedGroup = state
+    .getIn(['scene', 'groups'])
+    .findEntry(g => g.get('selected'));
 
   let sorter = [
-    { index: 0, condition: true, dom: <PanelGuides state={state}/> },
-    { index: 1, condition: true, dom: <PanelLayers state={state} /> },
-    { index: 2, condition: true, dom: <PanelLayerElements mode={state.mode} layers={state.scene.layers} selectedLayer={state.scene.selectedLayer} /> },
-    { index: 3, condition: true, dom: <PanelGroups mode={state.mode} groups={state.scene.groups} layers={state.scene.layers} /> },
-    { index: 4, condition: !multiselected, dom: <PanelElementEditor state={state} /> },
+    { index: 0, condition: true, dom: <PanelGuides state={state} /> },
+    {
+      index: 1,
+      condition: true,
+      dom: <PanelLayers state={state} readOnly={readOnly} />
+    },
+    {
+      index: 2,
+      condition: true,
+      dom: (
+        <PanelLayerElements
+          mode={state.mode}
+          layers={state.scene.layers}
+          selectedLayer={state.scene.selectedLayer}
+        />
+      )
+    },
+    {
+      index: 3,
+      condition: true,
+      dom: (
+        <PanelGroups
+          mode={state.mode}
+          groups={state.scene.groups}
+          layers={state.scene.layers}
+          readOnly={readOnly}
+        />
+      )
+    },
+    {
+      index: 4,
+      condition: !multiselected,
+      dom: <PanelElementEditor state={state} readOnly={readOnly} />
+    },
     //{ index: 5, condition: multiselected, dom: <PanelMultiElementsEditor state={state} /> },
-    { index: 6, condition: !!selectedGroup, dom: <PanelGroupEditor state={state} groupID={selectedGroup ? selectedGroup[0] : null} /> }
+    {
+      index: 6,
+      condition: !!selectedGroup,
+      dom: (
+        <PanelGroupEditor
+          state={state}
+          groupID={selectedGroup ? selectedGroup[0] : null}
+          readOnly={readOnly}
+        />
+      )
+    }
   ];
 
-  sorter = sorter.concat(sidebarComponents.map((Component, key) => {
-    return Component.prototype ? //if is a react component
-      {
-        condition: true,
-        dom: React.createElement(Component, { state, key })
-      } :
-      {                           //else is a sortable toolbar button
-        index: Component.index,
-        condition: Component.condition,
-        dom: React.createElement(Component.dom, { state, key })
-      };
-  }));
+  sorter = sorter.concat(
+    sidebarComponents.map((Component, key) => {
+      return Component.prototype //if is a react component
+        ? {
+            condition: true,
+            dom: React.createElement(Component, { state, key })
+          }
+        : {
+            //else is a sortable toolbar button
+            index: Component.index,
+            condition: Component.condition,
+            dom: React.createElement(Component.dom, { state, key })
+          };
+    })
+  );
 
   return (
     <aside
@@ -86,5 +143,6 @@ export default function Sidebar({ state, width, height, sidebarComponents }) {
 Sidebar.propTypes = {
   state: PropTypes.object.isRequired,
   width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired
+  height: PropTypes.number.isRequired,
+  readOnly: PropTypes.bool
 };

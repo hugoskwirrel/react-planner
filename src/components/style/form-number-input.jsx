@@ -15,7 +15,7 @@ const STYLE_INPUT = {
   backgroundImage: 'none',
   border: '1px solid rgba(0,0,0,.15)',
   outline: 'none',
-  height: '30px',
+  height: '30px'
 };
 
 const confirmStyle = {
@@ -31,7 +31,6 @@ const confirmStyle = {
 };
 
 export default class FormNumberInput extends Component {
-
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -41,33 +40,55 @@ export default class FormNumberInput extends Component {
     };
   }
 
-  componentWillReceiveProps( nextProps ) {
-    if( this.props.value !== nextProps.value ) {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.value !== nextProps.value) {
       this.setState({ showedValue: nextProps.value });
     }
   }
 
   render() {
-
-    let { value, min, max, precision, onChange, onValid, onInvalid, style, placeholder } = this.props;
+    let {
+      value,
+      min,
+      max,
+      precision,
+      onChange,
+      onValid,
+      onInvalid,
+      style,
+      placeholder,
+      readOnly
+    } = this.props;
     let numericInputStyle = { ...STYLE_INPUT, ...style };
 
-    if (this.state.focus) numericInputStyle.border = `1px solid ${SharedStyle.SECONDARY_COLOR.main}`;
+    if (this.state.focus)
+      numericInputStyle.border = `1px solid ${
+        SharedStyle.SECONDARY_COLOR.main
+      }`;
 
     let regexp = new RegExp(`^-?([0-9]+)?\\.?([0-9]{0,${precision}})?$`);
 
-    if (!isNaN(min) && isFinite(min) && this.state.showedValue < min) this.setState({ showedValue: min }); // value = min;
-    if (!isNaN(max) && isFinite(max) && this.state.showedValue > max) this.setState({ showedValue: max }); // value = max;
+    if (!isNaN(min) && isFinite(min) && this.state.showedValue < min)
+      this.setState({ showedValue: min }); // value = min;
+    if (!isNaN(max) && isFinite(max) && this.state.showedValue > max)
+      this.setState({ showedValue: max }); // value = max;
 
-    let currValue = regexp.test(this.state.showedValue) ? this.state.showedValue : parseFloat(this.state.showedValue).toFixed(precision);
+    let currValue = regexp.test(this.state.showedValue)
+      ? this.state.showedValue
+      : parseFloat(this.state.showedValue).toFixed(precision);
 
-    let different = parseFloat(this.props.value).toFixed(precision) !== parseFloat(this.state.showedValue).toFixed(precision);
+    let different =
+      parseFloat(this.props.value).toFixed(precision) !==
+      parseFloat(this.state.showedValue).toFixed(precision);
 
-    let saveFn = (e) => {
+    let saveFn = e => {
       e.stopPropagation();
 
       if (this.state.valid) {
-        let savedValue = (this.state.showedValue !== '' && this.state.showedValue !== '-') ? parseFloat(this.state.showedValue) : 0;
+        let savedValue =
+          this.state.showedValue !== '' && this.state.showedValue !== '-'
+            ? parseFloat(this.state.showedValue)
+            : 0;
 
         this.setState({ showedValue: savedValue });
         onChange({ target: { value: savedValue } });
@@ -80,14 +101,13 @@ export default class FormNumberInput extends Component {
           type="text"
           value={currValue}
           style={numericInputStyle}
-          onChange={(evt) => {
+          onChange={evt => {
             let valid = regexp.test(evt.nativeEvent.target.value);
 
             if (valid) {
               this.setState({ showedValue: evt.nativeEvent.target.value });
               if (onValid) onValid(evt.nativeEvent);
-            }
-            else {
+            } else {
               if (onInvalid) onInvalid(evt.nativeEvent);
             }
 
@@ -97,18 +117,36 @@ export default class FormNumberInput extends Component {
           onBlur={e => this.setState({ focus: false })}
           onKeyDown={e => {
             var keyCode = e.keyCode || e.which;
-            if ((keyCode == KEYBOARD_BUTTON_CODE.ENTER || keyCode == KEYBOARD_BUTTON_CODE.TAB) && different) {
+            if (
+              (keyCode == KEYBOARD_BUTTON_CODE.ENTER ||
+                keyCode == KEYBOARD_BUTTON_CODE.TAB) &&
+              different
+            ) {
               saveFn(e);
             }
           }}
           placeholder={placeholder}
+          disabled={readOnly}
         />
         <div
-          onClick={e => { if (different) saveFn(e); }}
+          onClick={e => {
+            if (different) saveFn(e);
+          }}
           title={this.context.translator.t('Confirm')}
-          style={{ ...confirmStyle, visibility: different ? 'visible' : 'hidden', opacity: different ? '1' : '0' }}
+          style={{
+            ...confirmStyle,
+            visibility: different ? 'visible' : 'hidden',
+            opacity: different ? '1' : '0'
+          }}
         >
-          <MdUpdate style={{ width: '100%', height: '100%', padding: '0.2em', color: '#FFF' }} />
+          <MdUpdate
+            style={{
+              width: '100%',
+              height: '100%',
+              padding: '0.2em',
+              color: '#FFF'
+            }}
+          />
         </div>
       </div>
     );
@@ -124,7 +162,8 @@ FormNumberInput.propTypes = {
   min: PropTypes.number,
   max: PropTypes.number,
   precision: PropTypes.number,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  readOnly: PropTypes.bool
 };
 
 FormNumberInput.contextTypes = {

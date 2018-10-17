@@ -12,30 +12,32 @@ const STYLE_INPUT = {
   backgroundImage: 'none',
   border: '1px solid rgba(0,0,0,.15)',
   outline: 'none',
-  height: '30px',
+  height: '30px'
 };
 
-
 export default class FormTextInput extends Component {
-
   constructor(props) {
     super(props);
     this.state = { focus: false };
   }
 
   render() {
-    let { style, ...rest } = this.props;
+    let { style, readOnly, ...rest } = this.props;
 
     let textInputStyle = { ...STYLE_INPUT, ...style };
-    if (this.state.focus) textInputStyle.border = `1px solid ${SharedStyle.SECONDARY_COLOR.main}`;
+    if (this.state.focus)
+      textInputStyle.border = `1px solid ${SharedStyle.SECONDARY_COLOR.main}`;
 
-    return <input
-      onFocus={e => this.setState({ focus: true })}
-      onBlur={e => this.setState({ focus: false })}
-      style={textInputStyle}
-      type="text"
-      {...rest}
-    />
+    return (
+      <input
+        onFocus={e => this.setState({ focus: true })}
+        onBlur={e => this.setState({ focus: false })}
+        style={textInputStyle}
+        type="text"
+        disabled={readOnly}
+        {...rest}
+      />
+    );
   }
 }
 

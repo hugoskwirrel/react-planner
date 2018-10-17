@@ -1,43 +1,57 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ItemAttributesEditor from './item-attributes-editor';
 import LineAttributesEditor from './line-attributes-editor';
 import HoleAttributesEditor from './hole-attributes-editor';
 
-
-export default function AttributesEditor({element, onUpdate, onValid, attributeFormData, state, ...rest}) {
-
+export default function AttributesEditor({
+  element,
+  onUpdate,
+  onValid,
+  attributeFormData,
+  state,
+  readOnly,
+  ...rest
+}) {
   switch (element.prototype) {
     case 'items':
-      return <ItemAttributesEditor
-              element={element}
-              onUpdate={onUpdate}
-              onValid={onValid}
-              attributeFormData={attributeFormData}
-              state={state}
-              {...rest}
-            />;
+      return (
+        <ItemAttributesEditor
+          element={element}
+          onUpdate={onUpdate}
+          onValid={onValid}
+          attributeFormData={attributeFormData}
+          state={state}
+          readOnly={readOnly}
+          {...rest}
+        />
+      );
     case 'lines':
-      return <LineAttributesEditor
-              element={element}
-              onUpdate={onUpdate}
-              onValid={onValid}
-              attributeFormData={attributeFormData}
-              state={state}
-              {...rest}
-            />;
+      return (
+        <LineAttributesEditor
+          element={element}
+          onUpdate={onUpdate}
+          onValid={onValid}
+          attributeFormData={attributeFormData}
+          state={state}
+          readOnly={readOnly}
+          {...rest}
+        />
+      );
     case 'holes':
-      return <HoleAttributesEditor
-              element={element}
-              onUpdate={onUpdate}
-              onValid={onValid}
-              attributeFormData={attributeFormData}
-              state={state}
-              {...rest}
-            />;
+      return (
+        <HoleAttributesEditor
+          element={element}
+          onUpdate={onUpdate}
+          onValid={onValid}
+          attributeFormData={attributeFormData}
+          state={state}
+          readOnly={readOnly}
+          {...rest}
+        />
+      );
     case 'areas':
       return null;
-
   }
 
   return null;
@@ -48,5 +62,6 @@ AttributesEditor.propTypes = {
   onUpdate: PropTypes.func.isRequired,
   onValid: PropTypes.func,
   attributeFormData: PropTypes.object.isRequired,
-  state: PropTypes.object.isRequired
+  state: PropTypes.object.isRequired,
+  readOnly: PropTypes.bool
 };
